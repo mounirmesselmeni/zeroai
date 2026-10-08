@@ -1,0 +1,150 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      ZEROAI_DATABASE_URL: sqlite+aiosqlite:////data/zeroai.db
+      ZEROAI_CORS_ORIGINS: '["http://localhost:5173"]'
+      ZEROAI_ALLOWED_MODEL_ORIGINS: '["http://host.docker.internal:11434","http://localhost:11434","http://127.0.0.1:11434","http://[::1]:11434","https://api.openai.com","https://ollama.com"]'
+      ZEROAI_OLLAMA_BASE_URL: http://host.docker.internal:11434/v1
+      ZEROAI_OLLAMA_API_KEY: ${ZEROAI_OLLAMA_API_KEY:-}
+      ZEROAI_OPENAI_API_KEY: ${ZEROAI_OPENAI_API_KEY:-}
+      ZEROAI_TRACING: ${ZEROAI_TRACING:-off}
+    command:
+      - sh
+      - -c
+      - uv sync --locked --no-dev && uv run --no-dev uvicorn zeroai.asgi:app --host 0.0.0.0 --port 8000 --reload
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./backend:/app
+      - backend_venv:/app/.venv
+      - backend_uv_cache:/root/.cache/uv
+      - zeroai_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=2)"
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 120s
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:5173:5173"
+    environment:
+      API_PROXY_TARGET: http://backend:8000
+      VITE_USE_MSW: "false"
+    command:
+      - sh
+      - -c
+      - yarn install --immutable && yarn dev --host 0.0.0.0 --port 5173 --strictPort
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+      - frontend_yarn_state:/app/.yarn
+
+  docs:
+    build:
+      context: ./backend
+    working_dir: /workspace
+    ports:
+      - "127.0.0.1:8010:8010"
+    command:
+      - sh
+      - -c
+      - cd /app && uv sync --locked --no-dev --group docs && cd /workspace && uv run --project /app --group docs --no-sync zensical serve -a 0.0.0.0:8010
+    volumes:
+      - ./backend:/app
+      - ./docs:/workspace/docs
+      - ./zensical.toml:/workspace/zensical.toml:ro
+      - docs_venv:/app/.venv
+      - docs_uv_cache:/root/.cache/uv
+
+  backend-check:
+    profiles: [checks]
+    build:
+      context: ./backend
+    environment:
+      ZEROAI_TRACING: "off"
+    command:
+      - sh
+      - -c
+      - >-
+        uv sync --locked &&
+        uv run ruff check --fix src tests &&
+        uv run ruff format src tests &&
+        uv run ty check &&
+        uv run pytest
+    volumes:
+      - ./backend:/app
+      - backend_check_venv:/app/.venv
+      - backend_uv_cache:/root/.cache/uv
+
+  frontend-check:
+    profiles: [checks]
+    build:
+      context: ./frontend
+    command:
+      - sh
+      - -c
+      - yarn install --immutable && yarn lint && yarn prettier --check '**/*.{ts,tsx,json,css}' && yarn typecheck && yarn build && yarn test
+    volumes:
+      - ./frontend:/app
+      - frontend_check_node_modules:/app/node_modules
+      - frontend_check_yarn_state:/app/.yarn
+
+  docs-check:
+    profiles: [checks]
+    build:
+      context: ./backend
+    working_dir: /workspace
+    command:
+      - sh
+      - -c
+      - cd /app && uv sync --locked --no-dev --group docs && cd /workspace && uv run --project /app --group docs --no-sync zensical build --strict
+    volumes:
+      - ./backend:/app
+      - ./docs:/workspace/docs
+      - ./zensical.toml:/workspace/zensical.toml:ro
+      - docs_check_venv:/app/.venv
+      - docs_check_uv_cache:/root/.cache/uv
+
+  playwright:
+    profiles: [e2e]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.e2e
+    init: true
+    shm_size: 1gb
+    command: ["sh", "-c", "yarn install --immutable && yarn e2e"]
+    volumes:
+      - ./frontend:/app
+      - playwright_node_modules:/app/node_modules
+      - playwright_yarn_state:/app/.yarn
+
+volumes:
+  zeroai_data:
+  backend_venv:
+  backend_uv_cache:
+  frontend_node_modules:
+  frontend_yarn_state:
+  docs_venv:
+  docs_uv_cache:
+  backend_check_venv:
+  frontend_check_node_modules:
+  frontend_check_yarn_state:
+  docs_check_venv:
+  docs_check_uv_cache:
+  playwright_node_modules:
+  playwright_yarn_state:

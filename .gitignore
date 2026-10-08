@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+*.db
+.env
+site/
+.DS_Store
+
+# Working notes and prompts are kept locally, not in the repository
+prompts/
+wip/

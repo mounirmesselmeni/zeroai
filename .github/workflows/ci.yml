@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          {
+            node-version: 22,
+            cache: yarn,
+            cache-dependency-path: frontend/yarn.lock,
+          }
+      - run: cd backend && uv sync --frozen
+      - run: cd frontend && corepack enable && yarn install --immutable
+      # Same hooks as locally: hygiene, ruff, ruff format, ty, eslint, prettier.
+      - uses: j178/prek-action@v1
+
+  api-contract:
+    # The checked-in schema must match what the FastAPI app currently serves.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: cd backend && uv sync --frozen
+      - name: Verify the checked-in OpenAPI schema
+        run: |
+          set -o pipefail
+          (cd backend && uv run python scripts/export_openapi.py --stdout) | diff -u frontend/src/api/openapi.json -
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: cd backend && uv sync --frozen --group tracing
+      # Fails below 90% coverage (see [tool.coverage.report] in backend/pyproject.toml).
+      - run: cd backend && uv run pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          {
+            node-version: 22,
+            cache: yarn,
+            cache-dependency-path: frontend/yarn.lock,
+          }
+      - run: cd frontend && corepack enable && yarn install --immutable
+      - run: cd frontend && yarn typecheck && yarn build
+      # Fails below 90% coverage (see coverage.thresholds in frontend/vite.config.ts).
+      - run: cd frontend && yarn test
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          {
+            node-version: 22,
+            cache: yarn,
+            cache-dependency-path: frontend/yarn.lock,
+          }
+      - run: cd frontend && corepack enable && yarn install --immutable
+      - run: cd frontend && yarn playwright install --with-deps chromium
+      - run: cd frontend && yarn e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: playwright-report, path: frontend/playwright-report }
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run --project backend --group docs zensical build --strict

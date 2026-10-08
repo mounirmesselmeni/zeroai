@@ -1,0 +1,8 @@
+dist
+coverage
+.yarn
+src/api/generated
+src/api/openapi.json
+public/mockServiceWorker.js
+playwright-report
+test-results

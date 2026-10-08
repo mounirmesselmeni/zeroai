@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="theme-color" content="#4c6ef5" />
+    <script>
+      // Apply the saved theme before first paint; Classic is the default.
+      try {
+        var ui = JSON.parse(localStorage.getItem('zeroai-ui') || '{}');
+        if (ui.state && ui.state.themeMode === 'terminal') {
+          document.documentElement.dataset.theme = 'terminal';
+          document.documentElement.setAttribute('data-mantine-color-scheme', 'dark');
+        } else {
+          document.documentElement.dataset.theme = 'classic';
+        }
+      } catch (e) {}
+    </script>
+    <title>ZeroAI · Stock news briefing</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

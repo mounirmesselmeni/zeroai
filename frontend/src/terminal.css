@@ -1,0 +1,401 @@
+/*
+ * Terminal theme ("Geek mode"): a phosphor-monitor shell. Everything is scoped to
+ * :root[data-theme='terminal'], so the Classic theme is untouched.
+ * Tokens mirror src/theme/terminal.ts (TERMINAL).
+ */
+:root[data-theme='terminal'] {
+  --t-bg: #0a0a0a;
+  --t-primary: #33ff00;
+  --t-secondary: #ffb000;
+  --t-muted: #1f521f;
+  --t-error: #ff3333;
+  --t-glow: 0 0 5px rgba(51, 255, 0, 0.5);
+  color-scheme: dark;
+}
+
+/* ---- base: monospace, green on black, a faint phosphor glow ------------------------------- */
+:root[data-theme='terminal'] body {
+  background: var(--t-bg);
+  color: var(--t-primary);
+  text-shadow: var(--t-glow);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+:root[data-theme='terminal'] ::selection {
+  background: var(--t-primary);
+  color: #000;
+  text-shadow: none;
+}
+:root[data-theme='terminal'] h1,
+:root[data-theme='terminal'] h2,
+:root[data-theme='terminal'] h3,
+:root[data-theme='terminal'] h4,
+:root[data-theme='terminal'] h5 {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+:root[data-theme='terminal'] .display {
+  font-family: inherit !important;
+  font-weight: 700 !important;
+  font-size: clamp(20px, 4.6vw, 38px) !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.2 !important;
+}
+:root[data-theme='terminal'] .display em {
+  color: inherit;
+  font-style: normal;
+}
+:root[data-theme='terminal'] a {
+  color: var(--t-primary);
+}
+:root[data-theme='terminal'] a:hover {
+  color: var(--t-secondary);
+}
+
+/* ---- CRT overlay: faint scanlines, never in the way of clicks ------------------------------ */
+:root[data-theme='terminal'] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.22) 3px
+  );
+}
+
+/* ---- layout chrome ------------------------------------------------------------------------ */
+:root[data-theme='terminal'] .header {
+  backdrop-filter: none;
+  background: var(--t-bg);
+  border-bottom: 1px solid var(--t-muted);
+}
+:root[data-theme='terminal'] .brand {
+  white-space: nowrap;
+  background: none;
+  color: var(--t-primary);
+  letter-spacing: 0.08em;
+}
+:root[data-theme='terminal'] .navlink {
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--t-primary);
+  border-radius: 0;
+  opacity: 0.8;
+}
+:root[data-theme='terminal'] .navlink::before {
+  content: './';
+  opacity: 0.6;
+}
+:root[data-theme='terminal'] .navlink:hover {
+  opacity: 1;
+  background: transparent;
+  color: var(--t-secondary);
+}
+/* active page = inverted video */
+:root[data-theme='terminal'] .navlink[data-active] {
+  background: var(--t-primary);
+  color: #000;
+  opacity: 1;
+  text-shadow: none;
+}
+:root[data-theme='terminal'] .hero {
+  background: none;
+  border: 1px solid var(--t-muted);
+  border-radius: 0;
+}
+:root[data-theme='terminal'] .hero::after {
+  display: none;
+}
+
+/* ---- panes (cards): a black box with a 1px green border ----------------------------------- */
+:root[data-theme='terminal'] .mantine-Card-root,
+:root[data-theme='terminal'] .mantine-Paper-root,
+:root[data-theme='terminal'] .setting-row,
+:root[data-theme='terminal'] .muted-panel {
+  background: var(--t-bg);
+  border: 1px solid var(--t-muted);
+  border-radius: 0;
+  box-shadow: none;
+}
+:root[data-theme='terminal'] .card-lift:hover {
+  border-color: var(--t-primary);
+}
+:root[data-theme='terminal'] .mantine-Divider-label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+:root[data-theme='terminal'] .mantine-Divider-root {
+  border-color: var(--t-muted);
+  border-top-style: dashed;
+}
+:root[data-theme='terminal'] .risk-title {
+  color: var(--t-secondary);
+}
+
+/* ---- buttons: [ BRACKETED ], inverted on hover -------------------------------------------- */
+:root[data-theme='terminal'] .mantine-Button-root:not(:disabled):not([data-disabled]) {
+  background: transparent !important;
+  border: 1px solid var(--t-primary) !important;
+  color: var(--t-primary) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-shadow: var(--t-glow);
+}
+/* Brackets wrap the whole button content (icon + label), so an icon-only button is still [ ⌥ ]. */
+:root[data-theme='terminal'] .mantine-Button-inner::before {
+  content: '[';
+  margin-right: 0.5em;
+}
+:root[data-theme='terminal'] .mantine-Button-inner::after {
+  content: ']';
+  margin-left: 0.5em;
+}
+:root[data-theme='terminal'] .mantine-Button-root:not(:disabled):not([data-disabled]):hover {
+  background: var(--t-primary) !important;
+  color: #000 !important;
+  text-shadow: none;
+}
+:root[data-theme='terminal'] .mantine-Button-root:not(:disabled):not([data-disabled]):active {
+  transform: translateY(1px);
+}
+:root[data-theme='terminal'] .mantine-Button-root:disabled,
+:root[data-theme='terminal'] .mantine-Button-root[data-disabled] {
+  background: transparent !important;
+  border: 1px dashed var(--t-muted) !important;
+  color: rgba(51, 255, 0, 0.42) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-shadow: none;
+  cursor: not-allowed;
+}
+:root[data-theme='terminal'] .mantine-ActionIcon-root {
+  background: transparent;
+  border: 1px solid var(--t-muted);
+  color: var(--t-primary);
+  border-radius: 0;
+}
+:root[data-theme='terminal'] .mantine-ActionIcon-root:hover {
+  background: var(--t-primary);
+  color: #000;
+}
+:root[data-theme='terminal'] .chip {
+  border: 1px solid var(--t-muted);
+  border-radius: 0 !important;
+  background: transparent;
+  color: var(--t-primary);
+  text-transform: uppercase;
+}
+:root[data-theme='terminal'] .chip:hover:not(:disabled) {
+  background: var(--t-primary);
+  color: #000;
+  text-shadow: none;
+}
+
+/* ---- inputs: no box, just a prompt and a block cursor ------------------------------------- */
+:root[data-theme='terminal'] .mantine-Input-input,
+:root[data-theme='terminal'] .mantine-PasswordInput-innerInput {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed var(--t-muted);
+  border-radius: 0;
+  color: var(--t-primary);
+  caret-color: var(--t-primary);
+  caret-shape: block;
+  text-shadow: var(--t-glow);
+}
+:root[data-theme='terminal'] .mantine-Input-input::placeholder {
+  color: rgba(51, 255, 0, 0.45);
+  text-shadow: none;
+}
+:root[data-theme='terminal'] .mantine-Input-input:focus,
+:root[data-theme='terminal'] .mantine-Input-input:focus-within {
+  border-bottom: 1px solid var(--t-primary);
+  background: #0f2a0f;
+}
+:root[data-theme='terminal'] .mantine-PasswordInput-input {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed var(--t-muted);
+}
+:root[data-theme='terminal'] .mantine-InputWrapper-label {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+:root[data-theme='terminal'] .mantine-InputWrapper-description {
+  color: #22a800;
+}
+
+/* ---- badges, tooltips, switches, segmented controls -------------------------------------- */
+/* Brackets go on the label, not the root: Mantine's badge root is a grid, and pseudo-elements on
+   it become extra cells that squeeze the text. */
+:root[data-theme='terminal'] .mantine-Badge-root {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: auto;
+  min-height: 22px;
+  padding: 2px 8px;
+  overflow: visible;
+  border: 1px solid var(--t-primary);
+  border-radius: 0;
+  background: transparent;
+  color: var(--t-primary);
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+:root[data-theme='terminal'] .mantine-Badge-label {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+:root[data-theme='terminal'] .mantine-Badge-label::before {
+  content: '[ ';
+  white-space: pre;
+}
+:root[data-theme='terminal'] .mantine-Badge-label::after {
+  content: ' ]';
+  white-space: pre;
+}
+:root[data-theme='terminal'] .mantine-Badge-section {
+  margin: 0;
+  display: inline-flex;
+}
+:root[data-theme='terminal'] .mantine-Tooltip-tooltip {
+  background: var(--t-bg);
+  color: var(--t-primary);
+  border: 1px solid var(--t-primary);
+  border-radius: 0;
+  text-shadow: none;
+}
+:root[data-theme='terminal'] .mantine-Switch-track {
+  border: 1px solid var(--t-primary);
+  border-radius: 0;
+  background: transparent;
+}
+:root[data-theme='terminal'] .mantine-Switch-thumb {
+  border-radius: 0;
+  background: var(--t-primary);
+}
+:root[data-theme='terminal'] .mantine-Switch-trackLabel {
+  color: var(--t-primary);
+}
+:root[data-theme='terminal'] .mantine-Switch-input:checked + .mantine-Switch-track {
+  background: var(--t-primary);
+  border-color: var(--t-primary);
+}
+:root[data-theme='terminal']
+  .mantine-Switch-input:checked
+  + .mantine-Switch-track
+  .mantine-Switch-thumb {
+  background: #000;
+}
+:root[data-theme='terminal']
+  .mantine-Switch-input:checked
+  + .mantine-Switch-track
+  .mantine-Switch-trackLabel {
+  color: #000;
+}
+:root[data-theme='terminal'] .mantine-SegmentedControl-root {
+  background: transparent;
+  border: 1px solid var(--t-muted);
+  border-radius: 0;
+}
+:root[data-theme='terminal'] .mantine-SegmentedControl-indicator {
+  background: var(--t-primary);
+  border-radius: 0;
+  box-shadow: none;
+}
+:root[data-theme='terminal'] .mantine-SegmentedControl-label {
+  color: var(--t-primary);
+  text-transform: uppercase;
+}
+:root[data-theme='terminal'] .mantine-SegmentedControl-label[data-active] {
+  color: #000;
+  text-shadow: none;
+}
+
+/* ---- tables, alerts, skeletons, scrollbars ------------------------------------------------ */
+:root[data-theme='terminal'] .mantine-Table-table {
+  --table-border-color: var(--t-muted);
+}
+:root[data-theme='terminal'] .mantine-Alert-root {
+  background: transparent;
+  border: 1px solid var(--t-primary);
+  border-radius: 0;
+}
+:root[data-theme='terminal'] [role='alert'] {
+  border-color: var(--t-error);
+  color: var(--t-error);
+  text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+}
+:root[data-theme='terminal'] .mantine-Skeleton-root {
+  background: var(--t-muted);
+  border-radius: 0;
+}
+:root[data-theme='terminal'] * {
+  scrollbar-color: var(--t-muted) var(--t-bg);
+}
+
+/* ---- motion: blinking cursor, rare glitch ------------------------------------------------- */
+.cursor {
+  animation: term-blink 1.06s steps(1) infinite;
+}
+@keyframes term-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes term-glitch {
+  0% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(-1px, 0);
+    text-shadow: 1px 0 var(--t-secondary);
+  }
+  50% {
+    transform: translate(1px, 0);
+    text-shadow: -1px 0 var(--t-error);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+:root[data-theme='terminal'] .navlink:hover,
+:root[data-theme='terminal'] .brand:hover {
+  animation: term-glitch 0.22s steps(2) 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor,
+  :root[data-theme='terminal'] .navlink:hover,
+  :root[data-theme='terminal'] .brand:hover {
+    animation: none;
+  }
+}
+
+/* ---- small screens: keep the header on one line and let the search form wrap ------------- */
+@media (max-width: 480px) {
+  :root[data-theme='terminal'] .navlink {
+    padding: 4px 6px;
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+  :root[data-theme='terminal'] .navlink::before {
+    display: none; /* drop the ./ prefix; it is the first thing to go when space is short */
+  }
+  :root[data-theme='terminal'] .hero {
+    padding: var(--mantine-spacing-md);
+  }
+  :root[data-theme='terminal'] .hero form .mantine-Group-root {
+    flex-wrap: wrap !important;
+  }
+  :root[data-theme='terminal'] .hero form .mantine-InputWrapper-root {
+    flex: 1 1 100% !important;
+    max-width: none !important;
+  }
+}

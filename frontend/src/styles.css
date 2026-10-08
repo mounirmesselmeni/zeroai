@@ -1,0 +1,154 @@
+body {
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.006em;
+}
+
+/* Content column: full width on phones/tablets, 70% on large screens. */
+.page {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--mantine-spacing-md);
+}
+@media (min-width: 75em) {
+  .page {
+    width: 70%;
+    padding-inline: 0;
+  }
+}
+
+.header {
+  backdrop-filter: blur(12px);
+  background-color: color-mix(in srgb, var(--mantine-color-body) 85%, transparent);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.brand {
+  letter-spacing: -0.03em;
+}
+
+.hero {
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-lg);
+  padding: var(--mantine-spacing-lg);
+  background:
+    radial-gradient(var(--mantine-color-default-border) 1px, transparent 1px) 0 0 / 20px 20px,
+    var(--mantine-color-body);
+}
+@media (min-width: 48em) {
+  .hero {
+    padding: 2.5rem;
+  }
+}
+
+.chip {
+  border: 1px solid var(--mantine-color-default-border);
+  background: var(--mantine-color-body);
+  color: var(--mantine-color-text);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.chip:hover:not(:disabled) {
+  background: var(--mantine-color-default-hover);
+}
+.chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card-lift {
+  transition: border-color 150ms ease;
+}
+.card-lift:hover {
+  border-color: var(--mantine-color-dimmed);
+}
+
+.navlink {
+  padding: 6px 10px;
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dimmed);
+  text-decoration: none;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+.navlink:hover {
+  background: var(--mantine-color-default-hover);
+  color: var(--mantine-color-text);
+}
+.navlink[data-active] {
+  background: var(--mantine-color-default-hover);
+  color: var(--mantine-color-text);
+}
+
+.muted-panel {
+  background: var(--mantine-color-default-hover);
+  border: 1px solid var(--mantine-color-default-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-lift,
+  .chip,
+  .navlink {
+    transition: none;
+  }
+}
+
+/* Mantine derives the filled-button text colour from the light primary shade only. */
+:root:not([data-theme='terminal'])[data-mantine-color-scheme='dark']
+  .mantine-Button-root:not([data-variant]:not([data-variant='filled'])):not(:disabled):not(
+    [data-disabled]
+  ) {
+  color: var(--mantine-color-dark-7) !important;
+}
+
+/* Disabled buttons: an obvious "not available" look (dashed outline, dimmed text) in both themes. */
+.mantine-Button-root:disabled,
+.mantine-Button-root[data-disabled] {
+  background: transparent !important;
+  border: 1px dashed var(--mantine-color-default-border) !important;
+  color: var(--mantine-color-dimmed) !important;
+  cursor: not-allowed;
+}
+
+/* Switches: high-contrast on/off in both themes. */
+.mantine-Switch-track {
+  background: transparent;
+  border: 1.5px solid var(--mantine-color-dimmed);
+}
+.mantine-Switch-thumb {
+  background: var(--mantine-color-dimmed);
+  border-color: transparent;
+}
+.mantine-Switch-trackLabel {
+  color: var(--mantine-color-dimmed);
+  font-weight: 700;
+}
+.mantine-Switch-input:checked + .mantine-Switch-track {
+  background: var(--mantine-color-text);
+  border-color: var(--mantine-color-text);
+}
+.mantine-Switch-input:checked + .mantine-Switch-track .mantine-Switch-thumb {
+  background: var(--mantine-color-body);
+}
+.mantine-Switch-input:checked + .mantine-Switch-track .mantine-Switch-trackLabel {
+  color: var(--mantine-color-body);
+}
+
+.setting-row {
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+}
+
+/* Display type: an elegant serif for the big page titles, set against Geist everywhere else. */
+.display {
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.05 !important;
+}
+.display em {
+  font-style: italic;
+  color: var(--mantine-color-dimmed);
+}

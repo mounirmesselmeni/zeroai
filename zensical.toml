@@ -1,0 +1,50 @@
+# Documentation site, built with Zensical (https://zensical.org):
+#   uv run --project backend --group docs zensical serve   # live preview
+#   uv run --project backend --group docs zensical build   # static site in site/
+
+[project]
+site_name = "ZeroAI"
+site_description = "One-page, AI-generated summary of the latest news for a stock"
+docs_dir = "docs"
+site_dir = "site"
+
+nav = [
+  { "Home" = "index.md" },
+  { "Getting started" = "getting-started.md" },
+  { "Concepts" = [
+    "concepts/architecture.md",
+    "concepts/request-flow.md",
+    "concepts/async.md",
+    "concepts/streaming.md",
+    "concepts/data-model.md",
+  ] },
+  { "Configuration" = [
+    "configuration/index.md",
+    "configuration/models.md",
+    "configuration/thinking.md",
+    "configuration/news-sources.md",
+    "configuration/concurrency.md",
+    "configuration/reference.md",
+  ] },
+  { "Guides" = [
+    "guides/api.md",
+    "guides/frontend.md",
+    "guides/themes.md",
+    "guides/observability.md",
+    "guides/docker-compose.md",
+    "guides/troubleshooting.md",
+  ] },
+  { "Testing" = "testing.md" },
+]
+
+[project.theme]
+features = [
+  "navigation.instant",
+  "navigation.sections",
+  "navigation.top",
+  "navigation.footer",
+  "content.code.copy",
+  "content.tabs.link",
+  "search.highlight",
+  "toc.follow",
+]
