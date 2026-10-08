@@ -4,6 +4,8 @@ A one-page, AI-generated briefing of the latest news for a stock, for traders wh
 informed while managing a portfolio. Type a ticker, watch the summary stream in, and click through
 to the source articles.
 
+Read the [ZeroAI documentation](https://zeroai-docs.mounirmesselmeni.de/).
+
 ![stack](https://img.shields.io/badge/python-3.14-blue) ![stack](https://img.shields.io/badge/FastAPI-PydanticAI-green) ![stack](https://img.shields.io/badge/React-Mantine-purple)
 
 ## How it works

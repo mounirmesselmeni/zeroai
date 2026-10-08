@@ -5,7 +5,7 @@
 [project]
 site_name = "ZeroAI"
 site_description = "One-page, AI-generated summary of the latest news for a stock"
-site_url = "https://mounirmesselmeni.github.io/zeroai/"
+site_url = "https://zeroai-docs.mounirmesselmeni.de/"
 docs_dir = "docs"
 site_dir = "site"
 
